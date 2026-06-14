@@ -35,7 +35,7 @@ export function Sidebar({ user }: SidebarProps) {
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
           <Coins className="w-5 h-5 text-white" />
         </div>
-        <span className="text-lg font-bold gradient-text">FairSplit</span>
+        <span className="text-lg font-bold gradient-text">FairFunds</span>
       </div>
 
       {/* Navigation */}

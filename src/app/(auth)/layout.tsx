@@ -16,7 +16,7 @@ export default function AuthLayout({
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
             <Coins className="w-6 h-6 text-white" />
           </div>
-          <span className="text-2xl font-bold gradient-text">FairSplit</span>
+          <span className="text-2xl font-bold gradient-text">FairFunds</span>
         </div>
         {children}
       </div>

@@ -67,3 +67,7 @@ export async function signInAction(formData: FormData) {
 export async function signOutAction() {
   await nextAuthSignOut({ redirectTo: "/login" });
 }
+
+export async function signInWithOAuth(provider: "google" | "github") {
+  await nextAuthSignIn(provider, { redirectTo: "/dashboard" });
+}

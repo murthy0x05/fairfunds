@@ -3,25 +3,21 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ── USERS ──
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  passwordHash  String?   @map("password_hash")
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  avatarUrl     String?   @map("avatar_url")
-  isGuest       Boolean   @default(false) @map("is_guest")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  avatarUrl    String?  @map("avatar_url")
+  isGuest      Boolean  @default(false) @map("is_guest")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
-  accounts       Account[]
-  sessions       Session[]
   memberships    GroupMembership[]
   paidExpenses   Expense[]         @relation("ExpensePayer")
   splits         ExpenseSplit[]
@@ -56,9 +52,9 @@ model GroupMembership {
   id        String     @id @default(cuid())
   userId    String     @map("user_id")
   groupId   String     @map("group_id")
-  role      String     @default("MEMBER")
-  joinedAt  DateTime   @map("joined_at")
-  leftAt    DateTime?  @map("left_at")
+  role      MemberRole @default(MEMBER)
+  joinedAt  DateTime   @map("joined_at") @db.Date
+  leftAt    DateTime?  @map("left_at") @db.Date
   createdAt DateTime   @default(now()) @map("created_at")
 
   user  User  @relation(fields: [userId], references: [id])
@@ -70,7 +66,10 @@ model GroupMembership {
   @@map("group_memberships")
 }
 
-// MemberRole enum removed for SQLite
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
 
 // ── EXPENSES ──
 
@@ -81,9 +80,9 @@ model Expense {
   description String
   amount      Int           // smallest currency unit (paise/cents)
   currency    String        @default("INR")
-  date        DateTime
-  splitType   String        @map("split_type")
-  status      String        @default("ACTIVE")
+  date        DateTime      @db.Date
+  splitType   SplitType     @map("split_type")
+  status      ExpenseStatus @default(ACTIVE)
   notes       String?
 
   importBatchId String? @map("import_batch_id")
@@ -104,7 +103,18 @@ model Expense {
   @@map("expenses")
 }
 
-// SplitType and ExpenseStatus enums removed for SQLite
+enum SplitType {
+  EQUAL
+  UNEQUAL
+  PERCENTAGE
+  SHARE
+}
+
+enum ExpenseStatus {
+  ACTIVE
+  DUPLICATE
+  DELETED
+}
 
 // ── EXPENSE SPLITS ──
 
@@ -136,7 +146,7 @@ model Settlement {
   toUserId   String   @map("to_user_id")
   amount     Int
   currency   String   @default("INR")
-  date       DateTime
+  date       DateTime @db.Date
   notes      String?
 
   importBatchId String? @map("import_batch_id")
@@ -162,7 +172,7 @@ model ExchangeRate {
   baseCurrency   String   @map("base_currency")
   targetCurrency String   @map("target_currency")
   rate           Float
-  date           DateTime
+  date           DateTime @db.Date
   source         String   @default("frankfurter")
 
   @@unique([baseCurrency, targetCurrency, date])
@@ -176,7 +186,7 @@ model ImportBatch {
   id          String       @id @default(cuid())
   fileName    String       @map("file_name")
   fileHash    String?      @map("file_hash")
-  status      String       @default("PENDING")
+  status      ImportStatus @default(PENDING)
   groupId     String?      @map("group_id")
   importedBy  String       @map("imported_by")
   totalRows   Int          @default(0) @map("total_rows")
@@ -194,7 +204,14 @@ model ImportBatch {
   @@map("import_batches")
 }
 
-// ImportStatus enum removed for SQLite
+enum ImportStatus {
+  PENDING
+  PARSING
+  REVIEW
+  IMPORTING
+  COMPLETED
+  FAILED
+}
 
 // ── IMPORT ANOMALIES ──
 
@@ -229,56 +246,15 @@ model AuditLog {
   entityId   String   @map("entity_id")
   action     String
   userId     String?  @map("user_id")
-  changes    Json?
-  metadata   Json?
+  changes    Json?    @db.JsonB
+  metadata   Json?    @db.JsonB
   createdAt  DateTime @default(now()) @map("created_at")
 
   user    User?    @relation(fields: [userId], references: [id])
-  expense Expense? @relation(fields: [entityId], references: [id])
+  expense Expense? @relation(fields: [entityId], references: [id], map: "fk_audit_expense")
 
   @@index([entityType, entityId], name: "idx_audit_entity_history")
   @@index([userId, createdAt], name: "idx_audit_user_activity")
   @@index([createdAt], name: "idx_audit_time_range")
   @@map("audit_logs")
-}
-
-// ── AUTH.JS ADAPTER MODELS ──
-
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique @map("session_token")
-  userId       String   @map("user_id")
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_tokens")
 }

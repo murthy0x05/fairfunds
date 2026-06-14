@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaBetterSqlite3({ url: "file:./dev.db" });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Seeding database...\n");
@@ -22,22 +24,22 @@ async function main() {
 
   // ── Create Users ──
   const aisha = await prisma.user.create({
-    data: { name: "Aisha", email: "aisha@fairsplit.app", passwordHash },
+    data: { name: "Aisha", email: "aisha@fairfunds.app", passwordHash },
   });
   const rohan = await prisma.user.create({
-    data: { name: "Rohan", email: "rohan@fairsplit.app", passwordHash },
+    data: { name: "Rohan", email: "rohan@fairfunds.app", passwordHash },
   });
   const priya = await prisma.user.create({
-    data: { name: "Priya", email: "priya@fairsplit.app", passwordHash },
+    data: { name: "Priya", email: "priya@fairfunds.app", passwordHash },
   });
   const sam = await prisma.user.create({
-    data: { name: "Sam", email: "sam@fairsplit.app", passwordHash },
+    data: { name: "Sam", email: "sam@fairfunds.app", passwordHash },
   });
   const meera = await prisma.user.create({
-    data: { name: "Meera", email: "meera@fairsplit.app", passwordHash },
+    data: { name: "Meera", email: "meera@fairfunds.app", passwordHash },
   });
   const dev = await prisma.user.create({
-    data: { name: "Dev", email: "dev@fairsplit.app", passwordHash, isGuest: false },
+    data: { name: "Dev", email: "dev@fairfunds.app", passwordHash, isGuest: false },
   });
 
   console.log("✅ Created 6 users");
@@ -152,9 +154,9 @@ async function main() {
   console.log("\n🎉 Seed complete!");
   console.log(`\n📋 Group ID: ${group.id}`);
   console.log(`\n🔐 Login credentials (all users):`);
-  console.log(`   Email: [name]@fairsplit.app`);
+  console.log(`   Email: [name]@fairfunds.app`);
   console.log(`   Password: password123`);
-  console.log(`   Example: aisha@fairsplit.app / password123`);
+  console.log(`   Example: aisha@fairfunds.app / password123`);
 }
 
 main()

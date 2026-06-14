@@ -1,4 +1,4 @@
-# FairSplit — Shared Expense Management
+# FairFunds — Shared Expense Management
 
 > Transparent, explainable shared expense tracking with CSV import, multi-currency support, and temporal membership management.
 
@@ -58,12 +58,12 @@ npm run dev
 
 | User  | Email               | Password     |
 |-------|---------------------|--------------|
-| Aisha | aisha@fairsplit.app | password123  |
-| Rohan | rohan@fairsplit.app | password123  |
-| Priya | priya@fairsplit.app | password123  |
-| Sam   | sam@fairsplit.app   | password123  |
-| Meera | meera@fairsplit.app | password123  |
-| Dev   | dev@fairsplit.app   | password123  |
+| Aisha | aisha@fairfunds.app | password123  |
+| Rohan | rohan@fairfunds.app | password123  |
+| Priya | priya@fairfunds.app | password123  |
+| Sam   | sam@fairfunds.app   | password123  |
+| Meera | meera@fairfunds.app | password123  |
+| Dev   | dev@fairfunds.app   | password123  |
 
 ### Importing the CSV
 

@@ -2,7 +2,7 @@
 
 ## 1. System Scope
 
-FairSplit is a production-grade, transparent, and explainable shared expense management application. It is specifically designed to handle the real-world complexity of shared living:
+FairFunds is a production-grade, transparent, and explainable shared expense management application. It is specifically designed to handle the real-world complexity of shared living:
 1. **Smart CSV Import Wizard**: A 9-stage validation and normalization pipeline that parses raw CSV files, detects anomalies, and guides the user through explicit reviews and corrections.
 2. **Temporal Membership Enforcement**: Logic that respects join/leave timelines so users are only charged for expenses on dates they were active in the group.
 3. **Multi-Currency Conversion**: Historical daily exchange rates pulled from the European Central Bank (via `frankfurter.app`) and cached in the database.

@@ -1,6 +1,6 @@
 # AI_USAGE.md — Artificial Intelligence Collaboration Log
 
-This document outlines the collaborative relationship between the software engineer and the AI coding assistant (Antigravity) in building the FairSplit Shared Expense Management Application.
+This document outlines the collaborative relationship between the software engineer and the AI coding assistant (Antigravity) in building the FairFunds Shared Expense Management Application.
 
 ---
 
@@ -43,7 +43,7 @@ During the course of the project, the AI assistant was leveraged as:
 *   **Resolution**: 
     1. Installed `@prisma/adapter-pg` and `pg`.
     2. Updated `src/lib/db.ts` to instantiate `PrismaClient` using `PrismaPg` pool adapter.
-    3. Configured a fallback mock connection string (`postgresql://postgres:postgres@localhost:5432/fairsplit?sslmode=disable`) during build time so page collection compiles without crashing.
+    3. Configured a fallback mock connection string (`postgresql://postgres:postgres@localhost:5432/fairfunds?sslmode=disable`) during build time so page collection compiles without crashing.
 
 ### 3.3 Tailwind CSS v4 `@apply` Fix
 *   **Issue**: Tailwind v4 threw a `Cannot apply unknown utility class glass-card` build error on `.glass-card-hover` using `@apply glass-card`.

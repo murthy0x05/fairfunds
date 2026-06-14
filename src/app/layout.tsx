@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FairSplit — Shared Expense Management",
+  title: "FairFunds — Shared Expense Management",
   description:
     "Transparent, explainable shared expense tracking with CSV import, multi-currency support, and temporal membership management.",
 };

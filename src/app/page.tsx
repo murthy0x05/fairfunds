@@ -24,7 +24,7 @@ export default function LandingPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
               <Coins className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold gradient-text">FairSplit</span>
+            <span className="text-xl font-bold gradient-text">FairFunds</span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login">
@@ -82,7 +82,7 @@ export default function LandingPage() {
               <span className="gradient-text">real-world complexity</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Not just another expense splitter. FairSplit handles the messy
+              Not just another expense splitter. FairFunds handles the messy
               reality of shared living — partial memberships, mixed currencies,
               and dirty data.
             </p>
@@ -152,9 +152,9 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Coins className="w-4 h-4 text-primary" />
-            <span>FairSplit</span>
+            <span>FairFunds</span>
           </div>
-          <p>Built for the FairSplit assignment</p>
+          <p>Built for the FairFunds assignment</p>
         </div>
       </footer>
     </div>
