@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { formatCurrency, fromSmallestUnit } from "@/lib/utils/currency";
+import { formatCurrency } from "@/lib/utils/currency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,9 +12,7 @@ import {
   BarChart3,
   ArrowRightLeft,
   Calendar,
-  CreditCard,
   User,
-  Divide,
   ChevronDown,
   ChevronUp,
   HelpCircle,
@@ -34,34 +32,30 @@ export function GroupTabs({ group, currentUserId }: GroupTabsProps) {
   const [explainingUser, setExplainingUser] = useState<{ id: string; name: string } | null>(null);
 
   const tabs = [
-    { id: "expenses" as Tab, label: "Expenses", icon: Receipt, count: group.expenses.length },
-    { id: "members" as Tab, label: "Members", icon: Users, count: group.memberships.length },
-    { id: "balances" as Tab, label: "Balances", icon: BarChart3 },
-    { id: "settlements" as Tab, label: "Settlements", icon: ArrowRightLeft, count: group.settlements.length },
+    { id: "expenses" as Tab, label: "Expenses", count: group.expenses.length },
+    { id: "members" as Tab, label: "Members", count: group.memberships.length },
+    { id: "balances" as Tab, label: "Balances" },
+    { id: "settlements" as Tab, label: "Settlements", count: group.settlements.length },
   ];
 
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="flex gap-1 p-1 rounded-xl bg-secondary/50 mb-6">
+      <div className="flex gap-0 border-b border-border mb-6">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex-1",
+              "px-4 py-2.5 text-sm font-medium transition-colors duration-150 border-b-2 -mb-px",
               activeTab === tab.id
-                ? "bg-card text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "border-primary text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
-            <tab.icon className="w-4 h-4" />
-            <span className="hidden sm:inline">{tab.label}</span>
+            {tab.label}
             {tab.count !== undefined && (
-              <span className={cn(
-                "text-xs px-1.5 py-0.5 rounded-md",
-                activeTab === tab.id ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-              )}>
+              <span className="ml-1.5 text-xs text-[var(--color-tertiary)]">
                 {tab.count}
               </span>
             )}
@@ -92,23 +86,18 @@ export function GroupTabs({ group, currentUserId }: GroupTabsProps) {
 
       {/* Explainability Modal */}
       {explainingUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in">
-          <div className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-2xl border border-border bg-card shadow-2xl flex flex-col glow-primary">
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/20">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-primary" />
-                <h2 className="text-xl font-bold">Derivation Proof</h2>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-lg border border-border bg-card shadow-xl flex flex-col">
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
+              <h2 className="text-sm font-semibold">Balance derivation — {explainingUser.name}</h2>
               <button
                 onClick={() => setExplainingUser(null)}
-                className="p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition"
+                className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
-            {/* Scrollable Content */}
-            <div className="p-6 overflow-y-auto flex-1">
+            <div className="p-5 overflow-y-auto flex-1">
               <BalanceExplainability
                 groupId={group.id}
                 userId={explainingUser.id}
@@ -130,112 +119,93 @@ function ExpenseList({ expenses, currency }: { expenses: any[]; currency: string
 
   if (expenses.length === 0) {
     return (
-      <Card>
-        <CardContent className="pt-0 text-center py-12">
-          <Receipt className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="font-semibold text-lg mb-2">No expenses yet</h3>
-          <p className="text-muted-foreground">Import a CSV or add expenses manually.</p>
-        </CardContent>
-      </Card>
+      <div className="py-16 text-center">
+        <p className="text-muted-foreground">No expenses yet. Import a CSV or add expenses manually.</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {expenses.map((expense: any, i: number) => (
-        <Card
+    <div className="space-y-1">
+      {expenses.map((expense: any) => (
+        <div
           key={expense.id}
-          className={cn(
-            "glass-card-hover cursor-pointer animate-slide-up transition-all",
-          )}
-          style={{ animationDelay: `${i * 50}ms` }}
+          className="rounded-lg border border-border hover:bg-secondary/30 transition-colors duration-150 cursor-pointer"
           onClick={() => setExpanded(expanded === expense.id ? null : expense.id)}
         >
-          <CardContent className="pt-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/10 flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-indigo-400" />
-                </div>
-                <div>
-                  <h4 className="font-medium">{expense.description}</h4>
-                  <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(expense.date).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      {expense.paidBy.name}
-                    </span>
-                  </div>
-                </div>
+          <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-sm">{expense.description}</span>
+                <Badge variant="secondary" className="text-xs">
+                  {expense.splitType.toLowerCase()}
+                </Badge>
               </div>
-              <div className="text-right flex items-center gap-3">
-                <div>
-                  <p className="font-semibold text-lg">
-                    {formatCurrency(expense.amount, expense.currency)}
-                  </p>
-                  <Badge variant="secondary" className="text-xs">
-                    <Divide className="w-3 h-3 mr-1" />
-                    {expense.splitType.toLowerCase()}
-                  </Badge>
-                </div>
-                {expanded === expense.id ? (
-                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                )}
+              <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-tertiary)]">
+                <span>
+                  {new Date(expense.date).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                  })}
+                </span>
+                <span>
+                  paid by {expense.paidBy.name}
+                </span>
               </div>
             </div>
+            <div className="flex items-center gap-3 ml-4">
+              <span className="font-medium text-sm tabular-nums">
+                {formatCurrency(expense.amount, expense.currency)}
+              </span>
+              {expanded === expense.id ? (
+                <ChevronUp className="w-3.5 h-3.5 text-[var(--color-tertiary)]" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-[var(--color-tertiary)]" />
+              )}
+            </div>
+          </div>
 
-            {/* Expanded split detail */}
-            {expanded === expense.id && (
-              <div className="mt-4 pt-4 border-t border-border space-y-2 animate-in">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                  Split Breakdown
-                </p>
+          {/* Expanded split detail */}
+          {expanded === expense.id && (
+            <div className="px-4 pb-3 pt-0 border-t border-border mx-4 mb-3">
+              <p className="text-xs text-[var(--color-tertiary)] uppercase tracking-wider mt-3 mb-2 font-medium">
+                Split breakdown
+              </p>
+              <div className="space-y-1.5">
                 {expense.splits.map((split: any) => (
                   <div
                     key={split.id}
-                    className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-secondary/30"
+                    className="flex items-center justify-between text-sm"
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-[10px] font-bold text-white">
-                        {split.user.name[0]}
+                      <div className="w-5 h-5 rounded-full bg-secondary flex items-center justify-center text-[10px] font-medium text-muted-foreground">
+                        {(split.user.name ?? "?")[0]}
                       </div>
-                      <span className="text-sm">{split.user.name}</span>
+                      <span>{split.user.name}</span>
                       {split.userId === expense.paidById && (
-                        <Badge variant="success" className="text-xs py-0">paid</Badge>
+                        <span className="text-xs text-primary">payer</span>
                       )}
                     </div>
-                    <span className="text-sm font-medium">
+                    <span className="font-medium tabular-nums">
                       {formatCurrency(split.amount, expense.currency)}
                     </span>
                   </div>
                 ))}
-                <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                  <span className="text-xs text-muted-foreground">Total</span>
-                  <span className="text-sm font-semibold">
-                    {formatCurrency(expense.amount, expense.currency)}
-                    {" "}
-                    <span className="text-success text-xs">✓ balanced</span>
-                  </span>
-                </div>
-                {expense.notes && (
-                  <p className="text-xs text-muted-foreground italic mt-2">
-                    📝 {expense.notes}
-                  </p>
-                )}
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <div className="flex items-center justify-between pt-2 mt-2 border-t border-border text-xs text-[var(--color-tertiary)]">
+                <span>Total</span>
+                <span className="font-medium text-foreground">
+                  {formatCurrency(expense.amount, expense.currency)}
+                </span>
+              </div>
+              {expense.notes && (
+                <p className="text-xs text-[var(--color-tertiary)] mt-2">
+                  Note: {expense.notes}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       ))}
     </div>
   );
@@ -245,51 +215,41 @@ function ExpenseList({ expenses, currency }: { expenses: any[]; currency: string
 
 function MemberList({ memberships }: { memberships: any[] }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
-      {memberships.map((m: any, i: number) => {
+    <div className="space-y-1">
+      {memberships.map((m: any) => {
         const isActive = !m.leftAt;
         return (
-          <Card
+          <div
             key={m.id}
-            className="animate-slide-up"
-            style={{ animationDelay: `${i * 60}ms` }}
+            className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border"
           >
-            <CardContent className="pt-0">
-              <div className="flex items-center gap-3">
-                <div className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white",
-                  isActive
-                    ? "bg-gradient-to-br from-indigo-500 to-purple-500"
-                    : "bg-gray-600"
-                )}>
-                  {m.user.name[0].toUpperCase()}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{m.user.name}</span>
-                    {m.user.isGuest && <Badge variant="warning">Guest</Badge>}
-                    <Badge variant={isActive ? "success" : "secondary"}>
-                      {isActive ? "Active" : "Left"}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Joined {new Date(m.joinedAt).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                    {m.leftAt && (
-                      <> · Left {new Date(m.leftAt).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })}</>
-                    )}
-                  </p>
-                </div>
+            <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-xs font-medium text-muted-foreground">
+              {(m.user.name ?? "?")[0].toUpperCase()}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">{m.user.name}</span>
+                {m.user.isGuest && <Badge variant="warning">guest</Badge>}
+                <Badge variant={isActive ? "success" : "secondary"}>
+                  {isActive ? "active" : "left"}
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
+              <p className="text-xs text-[var(--color-tertiary)] mt-0.5">
+                Joined {new Date(m.joinedAt).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+                {m.leftAt && (
+                  <> · Left {new Date(m.leftAt).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}</>
+                )}
+              </p>
+            </div>
+          </div>
         );
       })}
     </div>
@@ -313,7 +273,6 @@ function BalanceSummary({
   currentUserId: string;
   onExplain: (id: string, name: string) => void;
 }) {
-  // Client-side balance calculation (for INR-only expenses)
   const paidMap = new Map<string, number>();
   const owedMap = new Map<string, number>();
   const settledOutMap = new Map<string, number>();
@@ -346,114 +305,61 @@ function BalanceSummary({
   }).sort((a, b) => b.net - a.net);
 
   return (
-    <div className="space-y-4">
-      {/* Balance Formula */}
-      <Card className="border-primary/20 glow-primary">
-        <CardContent className="pt-0">
-          <p className="text-xs text-muted-foreground mb-2 font-medium uppercase tracking-wider">
-            Balance Formula
-          </p>
-          <p className="text-sm font-mono text-muted-foreground">
-            Net = <span className="text-emerald-400">Total Paid</span> − <span className="text-red-400">Total Owed</span> − <span className="text-amber-400">Settled Out</span> + <span className="text-blue-400">Settled In</span>
-          </p>
-        </CardContent>
-      </Card>
+    <div className="space-y-1">
+      {/* Formula note */}
+      <p className="text-xs text-[var(--color-tertiary)] mb-3 font-mono">
+        net = paid − owed − settled_out + settled_in
+      </p>
 
-      {/* Per-user balances */}
-      {balances.map((b, i) => {
+      {balances.map((b) => {
         const isPositive = b.net > 0;
         const isZero = b.net === 0;
         const isCurrent = b.userId === currentUserId;
 
         return (
-          <Card
+          <div
             key={b.userId}
             className={cn(
-              "animate-slide-up",
-              isCurrent && "border-primary/30 glow-primary"
+              "flex items-center justify-between px-4 py-3.5 rounded-lg border transition-colors",
+              isCurrent ? "border-primary/30 bg-primary/[0.03]" : "border-border"
             )}
-            style={{ animationDelay: `${i * 80}ms` }}
           >
-            <CardContent className="pt-0">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white",
-                    isPositive ? "bg-gradient-to-br from-emerald-500 to-teal-500" :
-                    isZero ? "bg-gray-600" :
-                    "bg-gradient-to-br from-red-500 to-rose-500"
-                  )}>
-                    {b.name[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-medium">
-                      {b.name}
-                      {isCurrent && <span className="text-primary text-xs ml-2">(you)</span>}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Paid {formatCurrency(b.paid, currency)} · Owes {formatCurrency(b.owed, currency)}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className={cn(
-                    "text-xl font-bold",
-                    isPositive ? "text-emerald-400" : isZero ? "text-muted-foreground" : "text-red-400"
-                  )}>
-                    {isPositive ? "+" : ""}{formatCurrency(b.net, currency)}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {isPositive ? "is owed" : isZero ? "settled" : "owes"}
-                  </p>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-xs font-medium text-muted-foreground">
+                {(b.name ?? "?")[0].toUpperCase()}
               </div>
-
-              {/* Breakdown */}
-              <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t border-border/50">
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Paid</p>
-                  <p className="text-sm font-medium text-emerald-400">
-                    {formatCurrency(b.paid, currency)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Owed</p>
-                  <p className="text-sm font-medium text-red-400">
-                    {formatCurrency(b.owed, currency)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Settled ↑</p>
-                  <p className="text-sm font-medium text-amber-400">
-                    {formatCurrency(b.settledOut, currency)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-muted-foreground">Settled ↓</p>
-                  <p className="text-sm font-medium text-blue-400">
-                    {formatCurrency(b.settledIn, currency)}
-                  </p>
-                </div>
+              <div>
+                <p className="text-sm font-medium">
+                  {b.name}
+                  {isCurrent && <span className="text-[var(--color-tertiary)] text-xs ml-1.5">(you)</span>}
+                </p>
+                <p className="text-xs text-[var(--color-tertiary)]">
+                  paid {formatCurrency(b.paid, currency)} · owes {formatCurrency(b.owed, currency)}
+                </p>
               </div>
-
-              {/* Explainability Trigger Button */}
-              <div className="mt-3 pt-3 border-t border-border/30 flex justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-xs font-semibold hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all duration-200"
-                  onClick={() => onExplain(b.userId, b.name)}
-                >
-                  <HelpCircle className="w-3.5 h-3.5 mr-1.5" />
-                  {isCurrent
-                    ? b.net >= 0
-                      ? "Explain my balance"
-                      : "Why do I owe this?"
-                    : `Explain ${b.name}'s balance`}
-                </Button>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <p className={cn(
+                  "text-sm font-semibold tabular-nums",
+                  isPositive ? "text-emerald-400" : isZero ? "text-muted-foreground" : "text-red-400"
+                )}>
+                  {isPositive ? "+" : ""}{formatCurrency(b.net, currency)}
+                </p>
+                <p className="text-xs text-[var(--color-tertiary)]">
+                  {isPositive ? "is owed" : isZero ? "settled" : "owes"}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => onExplain(b.userId, b.name)}
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          </div>
         );
       })}
     </div>
@@ -465,54 +371,39 @@ function BalanceSummary({
 function SettlementList({ settlements, currency }: { settlements: any[]; currency: string }) {
   if (settlements.length === 0) {
     return (
-      <Card>
-        <CardContent className="pt-0 text-center py-12">
-          <ArrowRightLeft className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="font-semibold text-lg mb-2">No settlements yet</h3>
-          <p className="text-muted-foreground">Settlements will appear after import or manual entry.</p>
-        </CardContent>
-      </Card>
+      <div className="py-16 text-center">
+        <p className="text-muted-foreground">No settlements yet.</p>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {settlements.map((s: any, i: number) => (
-        <Card key={s.id} className="animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
-          <CardContent className="pt-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-xs font-bold text-white">
-                    {s.fromUser.name[0]}
-                  </div>
-                  <ArrowRightLeft className="w-4 h-4 text-muted-foreground" />
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-xs font-bold text-white">
-                    {s.toUser.name[0]}
-                  </div>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">
-                    {s.fromUser.name} → {s.toUser.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(s.date).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold">{formatCurrency(s.amount, s.currency)}</p>
-                {s.notes && (
-                  <p className="text-xs text-muted-foreground">{s.notes}</p>
-                )}
-              </div>
+    <div className="space-y-1">
+      {settlements.map((s: any) => (
+        <div key={s.id} className="flex items-center justify-between px-4 py-3 rounded-lg border border-border">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-medium text-muted-foreground">
+              {(s.fromUser.name ?? "?")[0]}
             </div>
-          </CardContent>
-        </Card>
+            <span className="text-xs text-[var(--color-tertiary)]">→</span>
+            <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-medium text-muted-foreground">
+              {(s.toUser.name ?? "?")[0]}
+            </div>
+            <div className="ml-1">
+              <p className="text-sm font-medium">
+                {s.fromUser.name} → {s.toUser.name}
+              </p>
+              <p className="text-xs text-[var(--color-tertiary)]">
+                {new Date(s.date).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                })}
+                {s.notes && <> · {s.notes}</>}
+              </p>
+            </div>
+          </div>
+          <span className="font-medium text-sm tabular-nums">{formatCurrency(s.amount, s.currency)}</span>
+        </div>
       ))}
     </div>
   );

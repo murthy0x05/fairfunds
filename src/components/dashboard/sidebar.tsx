@@ -9,7 +9,6 @@ import {
   Users,
   Upload,
   BarChart3,
-  Settings,
   Receipt,
 } from "lucide-react";
 
@@ -29,17 +28,15 @@ export function Sidebar({ user }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex lg:w-64 flex-col border-r border-border bg-card/50">
+    <aside className="hidden lg:flex lg:w-56 flex-col border-r border-border bg-card">
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-6 py-5 border-b border-border">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-          <Coins className="w-5 h-5 text-white" />
-        </div>
-        <span className="text-lg font-bold gradient-text">FairFunds</span>
+      <div className="flex items-center gap-2 px-5 py-4 border-b border-border">
+        <Coins className="w-4 h-4 text-primary" />
+        <span className="text-sm font-semibold">FairFunds</span>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-3 space-y-0.5">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -49,10 +46,10 @@ export function Sidebar({ user }: SidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                "flex items-center gap-2.5 px-2.5 py-2 rounded-md text-sm transition-colors duration-150",
                 isActive
-                  ? "bg-primary/10 text-primary border border-primary/20"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  ? "bg-secondary text-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               )}
             >
               <item.icon className="w-4 h-4" />
@@ -63,14 +60,14 @@ export function Sidebar({ user }: SidebarProps) {
       </nav>
 
       {/* User */}
-      <div className="px-4 py-4 border-t border-border">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white">
+      <div className="px-4 py-3 border-t border-border">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-xs font-medium text-muted-foreground">
             {(user.name ?? "U")[0].toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{user.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+            <p className="text-xs text-[var(--color-tertiary)] truncate">{user.email}</p>
           </div>
         </div>
       </div>

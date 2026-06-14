@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { createGroup } from "@/actions/groups";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Users } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function NewGroupPage() {
   const [loading, setLoading] = useState(false);
@@ -22,27 +22,21 @@ export default function NewGroupPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto">
-      <Card className="animate-in">
+    <div className="max-w-md mx-auto">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            Create New Group
-          </CardTitle>
-          <CardDescription>
-            Set up an expense sharing group
-          </CardDescription>
+          <CardTitle>Create new group</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-red-400">
+              <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2.5 text-sm text-red-400">
                 {error}
               </div>
             )}
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium text-muted-foreground">
-                Group Name
+            <div className="space-y-1.5">
+              <label htmlFor="name" className="text-sm font-medium">
+                Group name
               </label>
               <Input
                 id="name"
@@ -51,25 +45,26 @@ export default function NewGroupPage() {
                 required
               />
             </div>
-            <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium text-muted-foreground">
-                Description (optional)
+            <div className="space-y-1.5">
+              <label htmlFor="description" className="text-sm font-medium">
+                Description
+                <span className="text-[var(--color-tertiary)] font-normal ml-1">optional</span>
               </label>
               <Input
                 id="description"
                 name="description"
-                placeholder="e.g., Monthly shared expenses for our apartment"
+                placeholder="e.g., Monthly shared expenses"
               />
             </div>
-            <div className="space-y-2">
-              <label htmlFor="defaultCurrency" className="text-sm font-medium text-muted-foreground">
-                Default Currency
+            <div className="space-y-1.5">
+              <label htmlFor="defaultCurrency" className="text-sm font-medium">
+                Default currency
               </label>
               <select
                 id="defaultCurrency"
                 name="defaultCurrency"
                 defaultValue="INR"
-                className="flex h-10 w-full rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-9 w-full rounded-md border border-border bg-secondary/50 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <option value="INR">₹ INR — Indian Rupee</option>
                 <option value="USD">$ USD — US Dollar</option>
@@ -77,9 +72,9 @@ export default function NewGroupPage() {
                 <option value="GBP">£ GBP — British Pound</option>
               </select>
             </div>
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Users className="w-4 h-4" />}
-              {loading ? "Creating..." : "Create Group"}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              {loading ? "Creating…" : "Create group"}
             </Button>
           </form>
         </CardContent>

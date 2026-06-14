@@ -15,8 +15,6 @@ import {
   Info,
   Loader2,
   ArrowRight,
-  Download,
-  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -76,64 +74,57 @@ export default function ImportPage() {
   }, [preview, groupId]);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Import CSV</h1>
-        <p className="text-muted-foreground mt-1">
-          Upload your expenses CSV and review anomalies before importing
+        <h1 className="text-2xl font-semibold">Import CSV</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          Upload, review anomalies, then import
         </p>
       </div>
 
-      {/* Progress Steps */}
-      <div className="flex items-center gap-2">
+      {/* Progress */}
+      <div className="flex items-center gap-4 text-sm">
         {[
-          { id: "upload", label: "Upload", icon: Upload },
-          { id: "review", label: "Review", icon: FileSearch },
-          { id: "complete", label: "Complete", icon: CheckCircle2 },
+          { id: "upload", label: "Upload" },
+          { id: "review", label: "Review" },
+          { id: "complete", label: "Done" },
         ].map((s, i) => {
           const isActive = step === s.id || (s.id === "review" && step === "analyzing");
           const isDone =
             (s.id === "upload" && step !== "upload") ||
             (s.id === "review" && step === "complete");
           return (
-            <div key={s.id} className="flex items-center gap-2 flex-1">
-              <div className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all",
-                isDone ? "bg-success text-white" :
-                isActive ? "bg-primary text-white" :
-                "bg-secondary text-muted-foreground"
-              )}>
-                {isDone ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
-              </div>
+            <div key={s.id} className="flex items-center gap-2">
+              {i > 0 && <span className="text-[var(--color-tertiary)]">—</span>}
               <span className={cn(
-                "text-sm font-medium hidden sm:inline",
-                isActive ? "text-foreground" : "text-muted-foreground"
+                "font-medium",
+                isDone ? "text-emerald-400" :
+                isActive ? "text-foreground" :
+                "text-[var(--color-tertiary)]"
               )}>
-                {s.label}
+                {isDone ? "✓" : `${i + 1}.`} {s.label}
               </span>
-              {i < 2 && <div className="flex-1 h-px bg-border" />}
             </div>
           );
         })}
       </div>
 
       {error && (
-        <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-red-400">
+        <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2.5 text-sm text-red-400">
           {error}
         </div>
       )}
 
       {/* Upload Step */}
       {step === "upload" && (
-        <Card className="animate-in">
+        <Card>
           <CardHeader>
-            <CardTitle>Upload Expenses CSV</CardTitle>
-            <CardDescription>Select a group and upload your CSV file</CardDescription>
+            <CardTitle>Upload expenses CSV</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">
                   Group ID
                 </label>
                 <input
@@ -141,24 +132,23 @@ export default function ImportPage() {
                   value={groupId}
                   onChange={(e) => setGroupId(e.target.value)}
                   placeholder="Paste your group ID here"
-                  className="flex h-10 w-full rounded-lg border border-border bg-secondary/50 px-3 py-2 text-sm"
+                  className="flex h-9 w-full rounded-md border border-border bg-secondary/50 px-3 py-2 text-sm placeholder:text-[var(--color-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
-                <p className="text-xs text-muted-foreground">
-                  Find the group ID in the URL when viewing a group
+                <p className="text-xs text-[var(--color-tertiary)]">
+                  Find this in the URL when viewing a group
                 </p>
               </div>
 
-              <div className="border-2 border-dashed border-border rounded-xl p-12 text-center hover:border-primary/50 transition-colors">
-                <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-sm text-muted-foreground mb-4">
-                  Drop your CSV file here or click to browse
+              <div className="border border-dashed border-border rounded-lg p-8 text-center">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Drop a CSV file or click to browse
                 </p>
                 <input
                   type="file"
                   accept=".csv"
                   onChange={handleFileUpload}
                   disabled={!groupId}
-                  className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer disabled:opacity-50"
+                  className="block w-full text-sm text-muted-foreground file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 cursor-pointer disabled:opacity-50"
                 />
               </div>
             </div>
@@ -168,61 +158,41 @@ export default function ImportPage() {
 
       {/* Analyzing Step */}
       {step === "analyzing" && (
-        <Card className="animate-in">
-          <CardContent className="pt-6 text-center py-16">
-            <Loader2 className="w-12 h-12 text-primary mx-auto mb-4 animate-spin" />
-            <h3 className="text-lg font-semibold mb-2">Analyzing CSV...</h3>
-            <p className="text-muted-foreground text-sm">
-              Running 14 anomaly detectors across all rows
-            </p>
-          </CardContent>
-        </Card>
+        <div className="py-16 text-center">
+          <Loader2 className="w-5 h-5 text-primary mx-auto mb-3 animate-spin" />
+          <p className="text-sm text-muted-foreground">
+            Analyzing CSV — running 14 anomaly detectors
+          </p>
+        </div>
       )}
 
       {/* Review Step */}
       {step === "review" && preview && (
-        <div className="space-y-4 animate-in">
-          {/* Summary Card */}
-          <Card className="border-primary/20 glow-primary">
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div className="text-center">
-                  <p className="text-2xl font-bold">{preview.totalRows}</p>
-                  <p className="text-xs text-muted-foreground">Total Rows</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-red-400">{preview.anomalySummary.critical}</p>
-                  <p className="text-xs text-muted-foreground">Critical</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-orange-400">{preview.anomalySummary.error}</p>
-                  <p className="text-xs text-muted-foreground">Errors</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-amber-400">{preview.anomalySummary.warning}</p>
-                  <p className="text-xs text-muted-foreground">Warnings</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-400">{preview.anomalySummary.info}</p>
-                  <p className="text-xs text-muted-foreground">Info</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="space-y-4">
+          {/* Summary */}
+          <div className="flex items-center gap-4 text-sm">
+            <span><strong>{preview.totalRows}</strong> rows</span>
+            {preview.anomalySummary.critical > 0 && (
+              <span className="text-red-400">{preview.anomalySummary.critical} critical</span>
+            )}
+            {preview.anomalySummary.error > 0 && (
+              <span className="text-orange-400">{preview.anomalySummary.error} errors</span>
+            )}
+            {preview.anomalySummary.warning > 0 && (
+              <span className="text-amber-400">{preview.anomalySummary.warning} warnings</span>
+            )}
+          </div>
 
           {/* Anomaly List */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileSearch className="w-5 h-5 text-primary" />
-                Anomaly Report
-              </CardTitle>
+              <CardTitle>Anomaly report</CardTitle>
               <CardDescription>
-                {preview.anomalySummary.total} anomalies detected across {preview.totalRows} rows
+                {preview.anomalySummary.total} anomalies detected
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 max-h-[500px] overflow-y-auto">
+              <div className="space-y-1.5 max-h-[500px] overflow-y-auto">
                 {preview.rows
                   .filter((r: any) => r.anomalies.length > 0)
                   .flatMap((r: any) => r.anomalies)
@@ -233,46 +203,34 @@ export default function ImportPage() {
                   .map((anomaly: any, i: number) => (
                     <div
                       key={i}
-                      className={cn(
-                        "flex items-start gap-3 p-3 rounded-lg border",
-                        anomaly.severity === "CRITICAL" ? "border-red-500/30 bg-red-500/5" :
-                        anomaly.severity === "ERROR" ? "border-orange-500/30 bg-orange-500/5" :
-                        anomaly.severity === "WARNING" ? "border-amber-500/30 bg-amber-500/5" :
-                        "border-blue-500/30 bg-blue-500/5"
-                      )}
+                      className="flex items-start gap-2.5 py-2.5 px-3 rounded-md border border-border text-sm"
                     >
                       {anomaly.severity === "CRITICAL" ? (
-                        <XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
+                        <XCircle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
                       ) : anomaly.severity === "ERROR" ? (
-                        <AlertCircle className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
+                        <AlertCircle className="w-3.5 h-3.5 text-orange-400 mt-0.5 shrink-0" />
                       ) : anomaly.severity === "WARNING" ? (
-                        <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
                       ) : (
-                        <Info className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
+                        <Info className="w-3.5 h-3.5 text-blue-400 mt-0.5 shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <Badge variant={
-                            anomaly.severity === "CRITICAL" ? "destructive" :
-                            anomaly.severity === "ERROR" ? "warning" :
-                            anomaly.severity === "WARNING" ? "warning" : "default"
-                          }>
-                            Row {anomaly.rowNumber}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">{anomaly.type}</span>
+                          <span className="text-xs text-[var(--color-tertiary)]">Row {anomaly.rowNumber}</span>
+                          <span className="text-xs text-[var(--color-tertiary)]">{anomaly.type}</span>
                         </div>
-                        <p className="text-sm mt-1">{anomaly.description}</p>
+                        <p className="text-sm mt-0.5">{anomaly.description}</p>
                         {anomaly.suggestedFix && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            💡 Suggested: {anomaly.suggestedFix}
+                          <p className="text-xs text-[var(--color-tertiary)] mt-0.5">
+                            Suggested: {anomaly.suggestedFix}
                           </p>
                         )}
                       </div>
                       <Badge variant={
                         anomaly.resolution === "AUTO_FIXED" ? "success" :
                         anomaly.resolution === "PENDING" ? "outline" : "secondary"
-                      }>
-                        {anomaly.resolution === "AUTO_FIXED" ? "✓ Auto-fixed" : anomaly.resolution}
+                      } className="shrink-0">
+                        {anomaly.resolution === "AUTO_FIXED" ? "auto-fixed" : anomaly.resolution.toLowerCase()}
                       </Badge>
                     </div>
                   ))}
@@ -281,13 +239,12 @@ export default function ImportPage() {
           </Card>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => { setStep("upload"); setPreview(null); }}>
               Cancel
             </Button>
             <Button onClick={handleCommit}>
-              <Download className="w-4 h-4" />
-              Confirm Import ({preview.totalRows} rows)
+              Import {preview.totalRows} rows
             </Button>
           </div>
         </div>
@@ -295,45 +252,29 @@ export default function ImportPage() {
 
       {/* Committing */}
       {step === "committing" && (
-        <Card className="animate-in">
-          <CardContent className="pt-6 text-center py-16">
-            <Loader2 className="w-12 h-12 text-primary mx-auto mb-4 animate-spin" />
-            <h3 className="text-lg font-semibold mb-2">Importing...</h3>
-            <p className="text-muted-foreground text-sm">
-              Writing expenses and settlements to database
-            </p>
-          </CardContent>
-        </Card>
+        <div className="py-16 text-center">
+          <Loader2 className="w-5 h-5 text-primary mx-auto mb-3 animate-spin" />
+          <p className="text-sm text-muted-foreground">
+            Writing expenses and settlements to database
+          </p>
+        </div>
       )}
 
       {/* Complete */}
       {step === "complete" && result && (
-        <Card className="animate-in border-success/20 glow-success">
-          <CardContent className="pt-6 text-center py-12">
-            <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-4" />
-            <h3 className="text-2xl font-bold mb-2">Import Complete!</h3>
-            <p className="text-muted-foreground mb-6">
-              Successfully imported your expense data
-            </p>
-
-            <div className="grid grid-cols-3 gap-6 max-w-md mx-auto mb-8">
-              <div>
-                <p className="text-3xl font-bold text-emerald-400">{result.expensesCreated}</p>
-                <p className="text-xs text-muted-foreground">Expenses</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-blue-400">{result.settlementsCreated}</p>
-                <p className="text-xs text-muted-foreground">Settlements</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-amber-400">{result.skipped}</p>
-                <p className="text-xs text-muted-foreground">Skipped</p>
-              </div>
+        <Card>
+          <CardContent className="pt-5">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span className="text-sm font-semibold">Import complete</span>
             </div>
-
-            <Button onClick={() => window.location.href = `/dashboard/groups/${groupId}`}>
-              <BarChart3 className="w-4 h-4" />
-              View Group <ArrowRight className="w-4 h-4" />
+            <div className="flex items-center gap-6 text-sm mb-4">
+              <span><strong className="text-foreground">{result.expensesCreated}</strong> <span className="text-[var(--color-tertiary)]">expenses</span></span>
+              <span><strong className="text-foreground">{result.settlementsCreated}</strong> <span className="text-[var(--color-tertiary)]">settlements</span></span>
+              <span><strong className="text-foreground">{result.skipped}</strong> <span className="text-[var(--color-tertiary)]">skipped</span></span>
+            </div>
+            <Button size="sm" onClick={() => window.location.href = `/dashboard/groups/${groupId}`}>
+              View group <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </CardContent>
         </Card>
