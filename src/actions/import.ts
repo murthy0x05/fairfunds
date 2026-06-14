@@ -374,7 +374,9 @@ export async function commitImport(
     });
 
     for (const m of group.memberships) {
-      memberMap.set(m.user.name.toLowerCase(), m.user.id);
+      if (m.user.name) {
+        memberMap.set(m.user.name.toLowerCase(), m.user.id);
+      }
     }
 
     let expensesCreated = 0;

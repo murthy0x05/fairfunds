@@ -57,7 +57,7 @@ export class BalanceService {
     // Build unique user map
     const userMap = new Map<string, string>();
     for (const m of memberships) {
-      userMap.set(m.userId, m.user.name);
+      userMap.set(m.userId, m.user.name || "Unknown");
     }
 
     // Prefetch exchange rates for all unique (currency, date) pairs

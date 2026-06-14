@@ -324,7 +324,7 @@ export class ExplainabilityService {
         settlementId: s.id,
         date: s.date,
         direction,
-        otherUserName: direction === "PAID" ? s.toUser.name : s.fromUser.name,
+        otherUserName: direction === "PAID" ? (s.toUser.name || "Unknown") : (s.fromUser.name || "Unknown"),
         amount: displayAmount,
         originalCurrency: s.currency,
         notes: s.notes,
@@ -354,7 +354,7 @@ export class ExplainabilityService {
 
     return {
       userId,
-      userName: user.name,
+      userName: user.name || "Unknown",
       groupId,
       groupName: group.name,
       displayCurrency,
@@ -396,7 +396,7 @@ export class ExplainabilityService {
       const displayShare = Math.round(split.amount * rate);
       return {
         userId: split.userId,
-        name: split.user.name,
+        name: split.user.name || "Unknown",
         isCurrentUser: split.userId === currentUserId,
         isPayer: split.userId === expense.paidById,
         shareInput: this.formatShareInput(expense.splitType, split, expense.splits.length, expense.currency),
@@ -412,14 +412,14 @@ export class ExplainabilityService {
       splitType: expense.splitType,
       totalAmount: displayTotal,
       participantCount: participants.length,
-      paidByName: expense.paidBy.name,
+      paidByName: expense.paidBy.name || "Unknown",
       formulaText: this.buildFormulaText(expense, displayTotal, displayCurrency, currentUserId, rate),
       participants,
       verification: {
         sumOfShares,
         isBalanced: Math.abs(remainder) <= 1,
         remainder,
-        remainderAssignedTo: remainder !== 0 ? expense.paidBy.name : "None",
+        remainderAssignedTo: remainder !== 0 ? (expense.paidBy.name || "Unknown") : "None",
       },
     };
   }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LogIn, Loader2 } from "lucide-react";
+import { GithubIcon } from "@/components/icons";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export default function LoginPage() {
             Sign in with Google
           </Button>
           <Button variant="outline" type="button" onClick={() => handleOAuth("github")} disabled={!!oauthLoading}>
-            {oauthLoading === "github" ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Github className="w-4 h-4 mr-2" />}
+            {oauthLoading === "github" ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <GithubIcon className="w-4 h-4 mr-2" />}
             Sign in with GitHub
           </Button>
         </div>

@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/db";
 import { AuditLogger } from "./audit.service";
 import { calculateSplit, type SplitInput, type SplitResult } from "@/lib/utils/split-calculator";
-import { type SplitType, type ExpenseStatus } from "@prisma/client";
+export type SplitType = "EQUAL" | "PERCENTAGE" | "SHARE" | "UNEQUAL";
+export type ExpenseStatus = "ACTIVE" | "DUPLICATE" | "DELETED";
 
 interface CreateExpenseData {
   groupId: string;
