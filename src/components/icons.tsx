@@ -7,3 +7,84 @@ export function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+/**
+ * FairFunds Logo — a stylized balance/scales mark in coral + ink.
+ * Renders an abstract "F" letterform with a balance line, evoking fairness/equality.
+ */
+export function FairFundsLogo({
+  size = 28,
+  variant = "default",
+  ...props
+}: React.SVGProps<SVGSVGElement> & {
+  size?: number;
+  variant?: "default" | "light";
+}) {
+  const primary = variant === "light" ? "#faf9f5" : "#cc785c";
+  const secondary = variant === "light" ? "rgba(250,249,245,0.5)" : "#141413";
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      {/* Background circle */}
+      <rect width="32" height="32" rx="8" fill={secondary} />
+      {/* Balance beam — horizontal bar */}
+      <rect x="7" y="10" width="18" height="2.5" rx="1.25" fill={primary} />
+      {/* Left pan */}
+      <path
+        d="M9 14.5C9 14.5 7 19.5 7 21C7 22.657 8.343 24 10 24C11.657 24 13 22.657 13 21C13 19.5 11 14.5 11 14.5"
+        stroke={primary}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      {/* Right pan */}
+      <path
+        d="M21 14.5C21 14.5 19 18 19 19.5C19 21.157 20.343 22.5 22 22.5C23.657 22.5 25 21.157 25 19.5C25 18 23 14.5 23 14.5"
+        stroke={primary}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      {/* Center fulcrum */}
+      <rect x="15" y="7" width="2.5" height="8" rx="1.25" fill={primary} />
+      {/* Small fulcrum triangle */}
+      <path d="M16.25 6L18.5 8.5H14L16.25 6Z" fill={primary} />
+    </svg>
+  );
+}
+
+/**
+ * FairFunds wordmark with logo - reusable across navbar, sidebar, footer
+ */
+export function FairFundsWordmark({
+  variant = "default",
+  logoSize = 28,
+  className = "",
+}: {
+  variant?: "default" | "light";
+  logoSize?: number;
+  className?: string;
+}) {
+  return (
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <FairFundsLogo size={logoSize} variant={variant} />
+      <span
+        className={`font-serif text-[18px] font-normal tracking-tight ${
+          variant === "light" ? "text-on-dark" : "text-ink"
+        }`}
+        style={{ fontFamily: "var(--font-serif)", letterSpacing: "-0.3px" }}
+      >
+        FairFunds
+      </span>
+    </div>
+  );
+}

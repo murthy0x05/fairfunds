@@ -1,71 +1,353 @@
 @import "tailwindcss";
 
+/* ── Tailwind v4 Theme Tokens ── */
+/* IMPORTANT: @theme requires STATIC values, not var() references.
+   Tailwind v4 resolves @theme at build time. */
 @theme {
-  --color-background: #09090b;
-  --color-foreground: #fafafa;
-  --color-card: #111113;
-  --color-card-foreground: #fafafa;
-  --color-popover: #111113;
-  --color-popover-foreground: #fafafa;
-  --color-primary: #6366f1;
+  /* Color tokens — DESIGN.md static values */
+  --color-canvas: #faf9f5;
+  --color-ink: #141413;
+  --color-primary: #cc785c;
+  --color-primary-active: #a9583e;
+  --color-primary-disabled: #e6dfd8;
+  --color-on-primary: #ffffff;
+
+  --color-body: #3d3d3a;
+  --color-body-strong: #252523;
+  --color-muted: #6c6a64;
+  --color-muted-soft: #8e8b82;
+
+  --color-hairline: #e6dfd8;
+  --color-hairline-soft: #ebe6df;
+
+  --color-surface-soft: #f5f0e8;
+  --color-surface-card: #efe9de;
+  --color-surface-cream-strong: #e8e0d2;
+  --color-surface-dark: #181715;
+  --color-surface-dark-elevated: #252320;
+  --color-surface-dark-soft: #1f1e1b;
+
+  --color-on-dark: #faf9f5;
+  --color-on-dark-soft: #a09d96;
+
+  --color-accent-teal: #5db8a6;
+  --color-accent-amber: #e8a55a;
+
+  --color-success: #5db872;
+  --color-warning: #d4a017;
+  --color-error: #c64545;
+
+  /* Legacy compat — shadcn/radix mapping */
+  --color-background: #faf9f5;
+  --color-foreground: #141413;
+  --color-card: #efe9de;
+  --color-card-foreground: #141413;
+  --color-popover: #faf9f5;
+  --color-popover-foreground: #141413;
   --color-primary-foreground: #ffffff;
-  --color-secondary: #18181b;
-  --color-secondary-foreground: #fafafa;
-  --color-muted: #18181b;
-  --color-muted-foreground: #a1a1aa;
-  --color-accent: #18181b;
-  --color-accent-foreground: #fafafa;
-  --color-destructive: #ef4444;
+  --color-secondary: #f5f0e8;
+  --color-secondary-foreground: #141413;
+  --color-muted-foreground: #6c6a64;
+  --color-accent: #cc785c;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #c64545;
   --color-destructive-foreground: #ffffff;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-border: #27272a;
-  --color-input: #27272a;
-  --color-ring: #6366f1;
-  --color-tertiary: #71717a;
-  --radius: 0.5rem;
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --color-border: #e6dfd8;
+  --color-input: #e6dfd8;
+  --color-ring: #cc785c;
+
+  /* Radius tokens — DESIGN.md */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 9999px;
+  --radius-full: 9999px;
+
+  /* Font families */
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", "Tiempos Headline", "EB Garamond", Garamond, "Times New Roman", serif;
+  --font-sans: var(--font-inter), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, "SF Mono", "Fira Code", monospace;
 }
 
+/* ── CSS Custom Properties (runtime access) ── */
 @layer base {
+  :root {
+    /* Brand & Accent */
+    --primary: #cc785c;
+    --primary-active: #a9583e;
+    --primary-disabled: #e6dfd8;
+    --on-primary: #ffffff;
+
+    /* Surfaces */
+    --canvas: #faf9f5;
+    --surface-soft: #f5f0e8;
+    --surface-card: #efe9de;
+    --surface-cream-strong: #e8e0d2;
+    --surface-dark: #181715;
+    --surface-dark-elevated: #252320;
+    --surface-dark-soft: #1f1e1b;
+
+    /* Text */
+    --ink: #141413;
+    --body: #3d3d3a;
+    --body-strong: #252523;
+    --clr-muted: #6c6a64;
+    --muted-soft: #8e8b82;
+    --on-dark: #faf9f5;
+    --on-dark-soft: #a09d96;
+
+    /* Borders */
+    --hairline: #e6dfd8;
+    --hairline-soft: #ebe6df;
+
+    /* Accents */
+    --accent-teal: #5db8a6;
+    --accent-amber: #e8a55a;
+
+    /* Semantic */
+    --clr-success: #5db872;
+    --clr-warning: #d4a017;
+    --clr-error: #c64545;
+  }
+
+  /* Global base reset */
   *,
   *::before,
   *::after {
-    @apply border-border;
+    border-color: var(--hairline);
   }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--canvas);
+    color: var(--body);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: rgba(204, 120, 92, 0.18);
+    color: var(--ink);
   }
 }
 
-@layer components {
-  .animate-in {
-    animation: fadeIn 0.25s ease-out forwards;
+/* ── Typography Utility Classes ── */
+@layer utilities {
+  /* Display — Serif (Cormorant Garamond) */
+  .text-display-xl {
+    font-family: var(--font-serif);
+    font-size: 64px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--ink);
+  }
+  .text-display-lg {
+    font-family: var(--font-serif);
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: var(--ink);
+  }
+  .text-display-md {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+  }
+  .text-display-sm {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    color: var(--ink);
+  }
+
+  /* Titles — Sans (Inter) */
+  .text-title-lg {
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+  .text-title-md {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+  .text-title-sm {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
+  /* Body — Sans */
+  .text-body-md {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0;
+    color: var(--body);
+  }
+  .text-body-sm {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0;
+    color: var(--body);
+  }
+
+  /* Caption / Labels */
+  .text-caption {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--clr-muted);
+  }
+  .text-caption-upper {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--clr-muted);
+  }
+
+  /* Code */
+  .text-code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0;
+  }
+
+  /* Button text */
+  .text-button {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  /* Nav link */
+  .text-nav-link {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  /* Responsive display */
+  @media (max-width: 767px) {
+    .text-display-xl {
+      font-size: 36px;
+      letter-spacing: -0.5px;
+    }
+    .text-display-lg {
+      font-size: 32px;
+      letter-spacing: -0.5px;
+    }
+    .text-display-md {
+      font-size: 28px;
+      letter-spacing: -0.3px;
+    }
+    .text-display-sm {
+      font-size: 24px;
+      letter-spacing: -0.2px;
+    }
+  }
+
+  /* Tabular numerals */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Mono text */
+  .text-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Transition utility */
+  .transition-colors-fast {
+    transition-property: color, background-color, border-color, opacity, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+
+  /* Shadow — rarely used, per DESIGN.md */
+  .shadow-subtle {
+    box-shadow: 0 1px 3px rgba(20, 20, 19, 0.08);
+  }
+
+  .shadow-dropdown {
+    box-shadow: 0 4px 12px rgba(20, 20, 19, 0.08), 0 1px 3px rgba(20, 20, 19, 0.04);
+  }
+
+  /* Focus ring — coral */
+  .focus-ring-coral {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--primary), 0 0 0 3px rgba(204, 120, 92, 0.15);
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Scrollbar styling */
+/* ── Scrollbar — warm tones ── */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--hairline);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--clr-muted);
+}
+
+/* ── Dark section utility ── */
+/* For embedding dark surfaces within cream pages */
+.surface-dark {
+  background-color: var(--surface-dark);
+  color: var(--on-dark);
+}
+.surface-dark-elevated {
+  background-color: var(--surface-dark-elevated);
+  color: var(--on-dark);
+}
+.surface-dark-soft {
+  background-color: var(--surface-dark-soft);
+  color: var(--on-dark);
 }

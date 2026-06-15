@@ -47,21 +47,17 @@ export default async function GroupDetailPage({ params }: Props) {
   if (!group) notFound();
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      {/* Group Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">{group.name}</h1>
-          {group.description && (
-            <p className="text-muted-foreground mt-1">{group.description}</p>
-          )}
-        </div>
+    <div className="max-w-3xl mx-auto space-y-5">
+      <div>
+        <h1 className="text-display-md">{group.name}</h1>
+        {group.description && (
+          <p className="text-body-md text-muted mt-1">
+            {group.description}
+          </p>
+        )}
       </div>
 
-      <GroupTabs
-        group={group}
-        currentUserId={session.user.id}
-      />
+      <GroupTabs group={group} currentUserId={session.user.id} />
     </div>
   );
 }
