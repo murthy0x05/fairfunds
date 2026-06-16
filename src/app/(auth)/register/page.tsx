@@ -6,7 +6,7 @@ import { signUp, signInWithOAuth } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserPlus, Loader2 } from "lucide-react";
-import { GithubIcon } from "@/components/icons";
+import { GithubIcon, GoogleIcon } from "@/components/icons";
 
 export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
@@ -45,8 +45,10 @@ export default function RegisterPage() {
           disabled={!!oauthLoading}
           className="w-full h-10 text-[14px]"
         >
-          {oauthLoading === "google" && (
+          {oauthLoading === "google" ? (
             <Loader2 className="w-4 h-4 animate-spin mr-2" />
+          ) : (
+            <GoogleIcon className="w-4 h-4 mr-2" />
           )}
           Sign up with Google
         </Button>
