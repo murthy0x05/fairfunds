@@ -13,7 +13,10 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
-import { HelpCircle, X, Plus } from "lucide-react";
+  HelpCircle,
+  X,
+  Plus
+} from "lucide-react";
 import { BalanceExplainability } from "./balance-explainability";
 import { AddMemberModal } from "./add-member-modal";
 import { AddExpenseModal } from "./add-expense-modal";
