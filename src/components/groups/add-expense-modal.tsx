@@ -195,7 +195,7 @@ export function AddExpenseModal({ groupId, currency, members, isOpen, onClose }:
                 <div className="flex gap-2">
                   <Button 
                     type="button" 
-                    variant={splitType === "EQUAL" ? "default" : "outline"} 
+                    variant={splitType === "EQUAL" ? "default" : "secondary"} 
                     size="sm" 
                     onClick={() => setSplitType("EQUAL")}
                     className="h-7 text-[11px]"
@@ -204,7 +204,7 @@ export function AddExpenseModal({ groupId, currency, members, isOpen, onClose }:
                   </Button>
                   <Button 
                     type="button" 
-                    variant={splitType === "UNEQUAL" ? "default" : "outline"} 
+                    variant={splitType === "UNEQUAL" ? "default" : "secondary"} 
                     size="sm" 
                     onClick={() => setSplitType("UNEQUAL")}
                     className="h-7 text-[11px]"
