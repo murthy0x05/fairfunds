@@ -21,6 +21,7 @@ import { BalanceExplainability } from "./balance-explainability";
 import { AddMemberModal } from "./add-member-modal";
 import { AddExpenseModal } from "./add-expense-modal";
 import { AddSettlementModal } from "./add-settlement-modal";
+import { removeMemberFromGroup } from "@/actions/groups";
 
 interface GroupTabsProps {
   group: any;
@@ -359,6 +360,20 @@ function MemberList({ memberships, groupId }: { memberships: any[], groupId: str
                 )}
               </p>
             </div>
+            {isActive && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-error hover:text-error hover:bg-error/10 shrink-0"
+                onClick={async () => {
+                  if (confirm(`Are you sure you want to remove ${m.user.name} from the group?`)) {
+                    await removeMemberFromGroup(groupId, m.user.id, new Date());
+                  }
+                }}
+              >
+                Remove
+              </Button>
+            )}
           </div>
         );
       })}
