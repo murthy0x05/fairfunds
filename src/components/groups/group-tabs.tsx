@@ -293,6 +293,7 @@ function ExpenseList({
           )}
         </div>
       ))}
+      </div>
       <AddExpenseModal groupId={groupId} currency={currency} members={activeMembers} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
