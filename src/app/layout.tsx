@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   title: "FairFunds — Shared Expense Management",
   description:
     "Transparent, explainable shared expense tracking with CSV import, multi-currency support, and temporal membership management.",
+  icons: {
+    icon: [
+      { url: '/icon.svg?v=3', type: 'image/svg+xml' }
+    ]
+  }
 };
 
 export default function RootLayout({
