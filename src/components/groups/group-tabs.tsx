@@ -13,10 +13,11 @@ import {
   Calendar,
   ChevronDown,
   ChevronUp,
-  HelpCircle,
-  X,
-} from "lucide-react";
+import { HelpCircle, X, Plus } from "lucide-react";
 import { BalanceExplainability } from "./balance-explainability";
+import { AddMemberModal } from "./add-member-modal";
+import { AddExpenseModal } from "./add-expense-modal";
+import { AddSettlementModal } from "./add-settlement-modal";
 
 interface GroupTabsProps {
   group: any;
@@ -85,10 +86,15 @@ export function GroupTabs({ group, currentUserId }: GroupTabsProps) {
         <ExpenseList
           expenses={group.expenses}
           currency={group.defaultCurrency}
+          groupId={group.id}
+          memberships={group.memberships}
         />
       )}
       {activeTab === "members" && (
-        <MemberList memberships={group.memberships} />
+        <MemberList 
+          memberships={group.memberships} 
+          groupId={group.id} 
+        />
       )}
       {activeTab === "balances" && (
         <BalanceSummary
@@ -104,6 +110,8 @@ export function GroupTabs({ group, currentUserId }: GroupTabsProps) {
         <SettlementList
           settlements={group.settlements}
           currency={group.defaultCurrency}
+          groupId={group.id}
+          memberships={group.memberships}
         />
       )}
 
@@ -144,26 +152,45 @@ export function GroupTabs({ group, currentUserId }: GroupTabsProps) {
 function ExpenseList({
   expenses,
   currency,
+  groupId,
+  memberships,
 }: {
   expenses: any[];
   currency: string;
+  groupId: string;
+  memberships: any[];
 }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const activeMembers = memberships
+    .filter((m: any) => !m.leftAt)
+    .map((m: any) => ({ id: m.user.id, name: m.user.name }));
 
   if (expenses.length === 0) {
     return (
       <div className="py-16 text-center">
         <Receipt className="w-6 h-6 text-muted mx-auto mb-3" />
         <p className="text-title-sm mb-1">No expenses yet</p>
-        <p className="text-body-sm text-muted">
+        <p className="text-body-sm text-muted mb-4">
           Import a CSV or add expenses manually.
         </p>
+        <Button onClick={() => setIsModalOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" /> Add Expense
+        </Button>
+        <AddExpenseModal groupId={groupId} currency={currency} members={activeMembers} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </div>
     );
   }
 
   return (
-    <div className="border border-hairline rounded-lg divide-y divide-hairline-soft">
+    <div>
+      <div className="flex justify-end mb-4">
+        <Button onClick={() => setIsModalOpen(true)} size="sm">
+          <Plus className="w-4 h-4 mr-2" /> Add Expense
+        </Button>
+      </div>
+      <div className="border border-hairline rounded-lg divide-y divide-hairline-soft">
       {expenses.map((expense: any) => (
         <div
           key={expense.id}
@@ -263,15 +290,24 @@ function ExpenseList({
           )}
         </div>
       ))}
+      <AddExpenseModal groupId={groupId} currency={currency} members={activeMembers} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
 
 // ── Members Tab ──
 
-function MemberList({ memberships }: { memberships: any[] }) {
+function MemberList({ memberships, groupId }: { memberships: any[], groupId: string }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <div className="border border-hairline rounded-lg divide-y divide-hairline-soft">
+    <div>
+      <div className="flex justify-end mb-4">
+        <Button onClick={() => setIsModalOpen(true)} size="sm">
+          <Plus className="w-4 h-4 mr-2" /> Add Member
+        </Button>
+      </div>
+      <div className="border border-hairline rounded-lg divide-y divide-hairline-soft">
       {memberships.map((m: any) => {
         const isActive = !m.leftAt;
         return (
@@ -322,6 +358,8 @@ function MemberList({ memberships }: { memberships: any[] }) {
           </div>
         );
       })}
+      </div>
+      <AddMemberModal groupId={groupId} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
@@ -477,24 +515,44 @@ function BalanceSummary({
 function SettlementList({
   settlements,
   currency,
+  groupId,
+  memberships,
 }: {
   settlements: any[];
   currency: string;
+  groupId: string;
+  memberships: any[];
 }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const activeMembers = memberships
+    .filter((m: any) => !m.leftAt)
+    .map((m: any) => ({ id: m.user.id, name: m.user.name }));
+
   if (settlements.length === 0) {
     return (
       <div className="py-16 text-center">
         <ArrowRightLeft className="w-6 h-6 text-muted mx-auto mb-3" />
         <p className="text-title-sm mb-1">No settlements yet</p>
-        <p className="text-body-sm text-muted">
+        <p className="text-body-sm text-muted mb-4">
           Settlements will appear after import or manual entry.
         </p>
+        <Button onClick={() => setIsModalOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" /> Record Payment
+        </Button>
+        <AddSettlementModal groupId={groupId} currency={currency} members={activeMembers} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </div>
     );
   }
 
   return (
-    <div className="border border-hairline rounded-lg divide-y divide-hairline-soft">
+    <div>
+      <div className="flex justify-end mb-4">
+        <Button onClick={() => setIsModalOpen(true)} size="sm">
+          <Plus className="w-4 h-4 mr-2" /> Record Payment
+        </Button>
+      </div>
+      <div className="border border-hairline rounded-lg divide-y divide-hairline-soft">
       {settlements.map((s: any) => (
         <div key={s.id} className="flex items-center justify-between px-5 py-4">
           <div className="flex items-center gap-3">
@@ -530,6 +588,8 @@ function SettlementList({
           </div>
         </div>
       ))}
+      </div>
+      <AddSettlementModal groupId={groupId} currency={currency} members={activeMembers} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
